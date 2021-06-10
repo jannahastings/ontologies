@@ -23,8 +23,6 @@ if __name__ == '__main__':
 
     inputFileName = args.inputExcel
     
-    # ROOT_DIR = "/home/tom/Documents/PROGRAMMING/Python/ontologies/Schedule/" #todo: delete, using path from args rather
-
     if inputFileName is None :
         parser.print_help()
         sys.exit('Not enough arguments. Expected at least -i "Excel file name" ')
@@ -32,10 +30,7 @@ if __name__ == '__main__':
     pathpath = str(Path(inputFileName).parents[0])
     basename = str(Path(inputFileName).stem)
     suffix = str(Path(inputFileName).suffix)
-    # filename = os.path.basename(inputFileName)
-    # basename = os.path.splitext(filename)[0]
-    # filename = 
-    # wb = openpyxl.load_workbook(ROOT_DIR + inputFileName) 
+    
     wb = openpyxl.load_workbook(inputFileName) #call with full path and filename? Much better
     sheet = wb.active
     data = sheet.rows
@@ -68,25 +63,9 @@ if __name__ == '__main__':
         save_sheet.cell(row=1, column=c+1).font = Font(size=12,bold=True)
     for r in range(len(rows)):
         row = [v for v in rows[r].values()]
-        # del row[0] # Tabulator-added ID column
         for c in range(len(header)):
             save_sheet.cell(row=r+2, column=c+1).value=row[c]
             
-
-        # Generate identifiers:
-        # if 'ID' in first_row:             
-        #     if not row[header.index("ID")]: #blank
-        #         if 'Label' and 'Parent' and 'Definition' in first_row: #make sure we have the right sheet
-        #             if row[header.index("Label")] and row[header.index("Parent")] and row[header.index("Definition")]: #not blank
-        #                 #generate ID here: 
-        #                 nextIdStr = str(searcher.getNextId(repo_key))
-        #                 id = repo_key.upper()+":"+nextIdStr.zfill(app.config['DIGIT_COUNT'])
-        #                 new_id = id
-        #                 for c in range(len(header)):
-        #                     if c==0:
-        #                         restart = True
-        #                         sheet.cell(row=r+2, column=c+1).value=new_id
-
     #save:   
     save_wb.save(pathpath + "/" + basename + "_Expanded.xlsx")
     
