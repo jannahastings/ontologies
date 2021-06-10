@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import re
 import openpyxl
 from openpyxl.styles import Font
@@ -22,14 +23,20 @@ if __name__ == '__main__':
 
     inputFileName = args.inputExcel
     
-    ROOT_DIR = "/home/tom/Documents/PROGRAMMING/Python/ontologies/Schedule/" #todo: need relative path
+    # ROOT_DIR = "/home/tom/Documents/PROGRAMMING/Python/ontologies/Schedule/" #todo: delete, using path from args rather
 
     if inputFileName is None :
         parser.print_help()
         sys.exit('Not enough arguments. Expected at least -i "Excel file name" ')
 
-
-    wb = openpyxl.load_workbook(ROOT_DIR + inputFileName) 
+    pathpath = str(Path(inputFileName).parents[0])
+    basename = str(Path(inputFileName).stem)
+    suffix = str(Path(inputFileName).suffix)
+    # filename = os.path.basename(inputFileName)
+    # basename = os.path.splitext(filename)[0]
+    # filename = 
+    # wb = openpyxl.load_workbook(ROOT_DIR + inputFileName) 
+    wb = openpyxl.load_workbook(inputFileName) #call with full path and filename? Much better
     sheet = wb.active
     data = sheet.rows
     rows = []
@@ -80,9 +87,6 @@ if __name__ == '__main__':
         #                         restart = True
         #                         sheet.cell(row=r+2, column=c+1).value=new_id
 
-    # Create version for saving
-    print("title is: ", inputFileName)
-    # save_sheet_name = #todo: save new spreadsheet called <name>"_Expanded"<".xlsx">
-    # spreadsheet_stream = io.BytesIO() #?
-    # save_wb.save(spreadsheet_stream)
-    save_wb.save("test.xlsx")
+    #save:   
+    save_wb.save(pathpath + "/" + basename + "_Expanded.xlsx")
+    
