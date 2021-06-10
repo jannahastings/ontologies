@@ -30,11 +30,21 @@ if __name__ == '__main__':
     wb = openpyxl.load_workbook(ROOT_DIR + inputFileName) 
     sheet = wb.active
     data = sheet.rows
+    rows = []
 
     header = [i.value for i in next(data)]
     print("got header: ", header)
-    # for row in data:
-    #     file_count = file_count+1
-
-    # print (file, ":", file_count)
-    # total_count = total_count+file_count
+    for row in sheet[2:sheet.max_row]:
+        values = {}
+        for key, cell in zip(header, row):
+            values[key] = cell.value
+        if any(values.values()):
+            rows.append(values)
+    
+    print("reached rows ", rows)
+    for r in range(len(rows)):
+        row = [v for v in rows[r].values()]
+        if "Aggregate" in header:
+            cell = row[header.index("Aggregate")]
+            print("cell is: ", cell)
+    
