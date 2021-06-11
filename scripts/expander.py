@@ -10,7 +10,20 @@ import argparse
 import subprocess
 import io
 
+def add_extra_values(header, row, aggregate):
+    print("aggregate is: ", aggregate)
+    aggregate_list = aggregate.split(";")
+    extra_rows = []
 
+    for agg in aggregate_list:
+    # for r in range(4): #todo: use aggregate values, insert correct cell values
+        extra_values = {}
+        for key, cell in zip(header, row):
+            extra_values[key] = cell.value
+        if any(extra_values.values()):
+            extra_rows.append(extra_values)
+            # print("extra_values: ", extra_values.values())
+    return extra_rows
 
 
 ## PROGRAM EXECUTION --- required argument: input file name
@@ -35,22 +48,35 @@ if __name__ == '__main__':
     sheet = wb.active
     data = sheet.rows
     rows = []
-
+    aggregate_list = ["Mean", "Minimum", "Maximum", "Median"]
     header = [i.value for i in next(data)]
-    print("got header: ", header)
+    # print("got header: ", header)
     for row in sheet[2:sheet.max_row]:
         values = {}
+        extra_rows = []
         for key, cell in zip(header, row):
             values[key] = cell.value
+            if key == "Aggregate" and cell.value != None:
+                extra_rows = add_extra_values(header, row, cell.value)
         if any(values.values()):
             rows.append(values)
+            # print("values: ", values.values())
+        for extra_row in extra_rows:
+            print("got extra row")
+            rows.append(extra_row)
+        
+            
+        
     
-    print("reached rows ", rows)
+    # print("reached rows ", rows)
     for r in range(len(rows)):
         row = [v for v in rows[r].values()]
         if "Aggregate" in header:
             cell = row[header.index("Aggregate")]
-            print("cell is: ", cell)
+            # print("cell is: ", cell)
+            # rows.insert(3, row)
+            # rows.insert(r, row) #test insert
+            #todo: split by ";" and create new rows
     
 
     #new sheet to save:
@@ -69,3 +95,4 @@ if __name__ == '__main__':
     #save:   
     save_wb.save(pathpath + "/" + basename + "_Expanded.xlsx")
     
+
