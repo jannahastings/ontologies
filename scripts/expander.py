@@ -10,12 +10,38 @@ import argparse
 import subprocess
 import io
 
-def add_extra_values(header, row, aggregate):
-    print("aggregate is: ", aggregate)
+def generate_unique_id(base_id, id_list, num):
+    print("id_list is: ", id_list)
+    num_list = []
+    # print("base_id is: ", base_id)
+    split_base = base_id.split(":")
+    # print("split_base[1] is: ", split_base[1])
+    split_base_num = int(split_base[1]) + num
+
+    for id in id_list:
+        split_id = id.split(":")
+        split_id_num = int(split_id[1])
+        num_list.append(split_id_num)
+    num_list.sort()
+    print("num_list is: ", num_list)
+    if split_base_num in num_list:
+        print("generate next id")
+        return split_id[0] + ":" + str(num_list[-1]).zfill(6)
+    else: 
+        print("use this id: ", split_base_num)
+        return split_id[0] + ":" + str(split_base_num).zfill(6)
+    
+        
+
+
+
+def add_extra_values(header, row, aggregate, id_list):
+    # print("aggregate is: ", aggregate)
     aggregate_list = aggregate.split(";")
     extra_rows = []
-
+    i = 0
     for agg in aggregate_list:
+        i = i+1
         extra_values = {}
         name = ""
         for key, cell in zip(header, row):
@@ -25,7 +51,8 @@ def add_extra_values(header, row, aggregate):
             elif key == "Parent":
                 extra_values[key] = name #agg + " " + str(cell.value)
             elif key == "ID": 
-                extra_values[key] = str(cell.value) #todo: need a function to check available ID's
+                new_id = generate_unique_id(cell.value, id_list, i)
+                extra_values[key] = new_id # str(cell.value) #todo: need a function to check available ID's
             elif key == "Definition":
                 extra_values[key] = "The " + agg + " of " + name
             else:
@@ -61,18 +88,29 @@ if __name__ == '__main__':
     aggregate_list = ["Mean", "Minimum", "Maximum", "Median"]
     header = [i.value for i in next(data)]
     # print("got header: ", header)
+    #build ID list:
+    id_list = []
+    for row in sheet[2:sheet.max_row]:
+        values = {}
+        extra_rows = []
+        for key, cell in zip(header, row):
+            values[key] = cell.value
+            if key == "ID" and cell.value != None:
+                id_list.append(cell.value)
+    print("id_list is: ", id_list)
+
     for row in sheet[2:sheet.max_row]:
         values = {}
         extra_rows = []
         for key, cell in zip(header, row):
             values[key] = cell.value
             if key == "Aggregate" and cell.value != None:
-                extra_rows = add_extra_values(header, row, cell.value)
+                extra_rows = add_extra_values(header, row, cell.value, id_list)
         if any(values.values()):
             rows.append(values)
             # print("values: ", values.values())
         for extra_row in extra_rows:
-            print("got extra row")
+            # print("got extra row")
             rows.append(extra_row)
         
             
