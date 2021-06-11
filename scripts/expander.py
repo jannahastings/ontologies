@@ -16,10 +16,20 @@ def add_extra_values(header, row, aggregate):
     extra_rows = []
 
     for agg in aggregate_list:
-    # for r in range(4): #todo: use aggregate values, insert correct cell values
         extra_values = {}
+        name = ""
         for key, cell in zip(header, row):
-            extra_values[key] = cell.value
+            if key == "Label":
+                extra_values[key] = agg + " " + str(cell.value)
+                name = str(cell.value)
+            elif key == "Parent":
+                extra_values[key] = name #agg + " " + str(cell.value)
+            elif key == "ID": 
+                extra_values[key] = str(cell.value) #todo: need a function to check available ID's
+            elif key == "Definition":
+                extra_values[key] = "The " + agg + " of " + name
+            else:
+                extra_values[key] = "" #str(cell.value) #todo: should these be blank?
         if any(extra_values.values()):
             extra_rows.append(extra_values)
             # print("extra_values: ", extra_values.values())
