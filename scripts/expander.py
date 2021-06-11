@@ -11,7 +11,7 @@ import subprocess
 import io
 
 def generate_unique_id(base_id, id_list, num):
-    print("id_list is: ", id_list)
+    # print("id_list is: ", id_list)
     num_list = []
     # print("base_id is: ", base_id)
     split_base = base_id.split(":")
@@ -23,12 +23,12 @@ def generate_unique_id(base_id, id_list, num):
         split_id_num = int(split_id[1])
         num_list.append(split_id_num)
     num_list.sort()
-    print("num_list is: ", num_list)
+    # print("num_list is: ", num_list)
     if split_base_num in num_list:
-        print("generate next id")
+        # print("generate next id")
         return split_id[0] + ":" + str(num_list[-1]).zfill(6)
     else: 
-        print("use this id: ", split_base_num)
+        # print("use this id: ", split_base_num)
         return split_id[0] + ":" + str(split_base_num).zfill(6)
     
         
@@ -97,7 +97,7 @@ if __name__ == '__main__':
             values[key] = cell.value
             if key == "ID" and cell.value != None:
                 id_list.append(cell.value)
-    print("id_list is: ", id_list)
+    # print("id_list is: ", id_list)
 
     for row in sheet[2:sheet.max_row]:
         values = {}
@@ -142,5 +142,6 @@ if __name__ == '__main__':
             
     #save:   
     save_wb.save(pathpath + "/" + basename + "_Expanded.xlsx")
+    print("success")
     
 
